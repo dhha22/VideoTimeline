@@ -7,14 +7,11 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.classting.R
 import com.classting.log.Logger
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.*
@@ -35,7 +32,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
 
     init {
         LayoutInflater.from(context).inflate(R.layout.classting_vidieo, this, true)
-        bandwidthMeter = DefaultBandwidthMeter();
+        bandwidthMeter = DefaultBandwidthMeter()
         mediaDataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "mediaPlayerSample"), bandwidthMeter as TransferListener<in DataSource>)
         window = Timeline.Window()
         initializePlayer()
@@ -60,7 +57,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
 
     fun playVideo() {
         if (!player.playWhenReady) {
-            Logger.v("play")
+            Logger.v("play video")
             player.playWhenReady = true
         }
 
@@ -68,7 +65,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
 
     fun pauseVideo() {
         if (player.playWhenReady) {
-            Logger.v("pause")
+            Logger.v("pause video")
             player.playWhenReady = false
         }
     }

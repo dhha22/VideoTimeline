@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.list_item.view.*
  */
 class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
-    private val rect: Rect = Rect()
+    private val videoRect: Rect = Rect()
     lateinit var feed: Feed
 
     init {
@@ -49,25 +49,27 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     }
 
     override fun getVisibilityPercent(): Int {
-        var percent: Int = 100
-        getLocalVisibleRect(rect)
-        //Logger.v("rect top: " + rect.top + ", rect bottom: " + rect.bottom + ", height: " + height)
-        percent = (height - rect.top) * 100 / height
-        if (feed.videoURL != null && percent >= 50) {
-            classtingVideoView.playVideo()
-        } else {
-            classtingVideoView.pauseVideo()
-
+        var percent: Int = 0
+        classtingVideoView.getLocalVisibleRect(videoRect)   // 현재 Video View의 위치를 가져옴
+        Logger.v("rect top: " + videoRect.top + ", rect bottom: " + videoRect.bottom + ", view height: " + classtingVideoView.height)
+        if (videoRect.bottom == classtingVideoView.height) {
+            percent = (videoRect.bottom - videoRect.top) * 100 / videoRect.bottom   // first item
+        } else if ((videoRect.top == 0)) {
+            percent = (videoRect.bottom) * 100 / classtingVideoView.height    // last item
         }
         return percent
     }
 
 
     override fun playVideo() {
-        Logger.v("play video")
+        if (feed.videoURL != null) {
+            classtingVideoView.playVideo()
+        }
     }
 
     override fun pauseVideo() {
-        Logger.v("pause video")
+        if (feed.videoURL != null) {
+            classtingVideoView.pauseVideo()
+        }
     }
 }

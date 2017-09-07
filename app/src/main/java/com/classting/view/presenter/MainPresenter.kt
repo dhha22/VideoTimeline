@@ -38,9 +38,23 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
     //  feed scrolled
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         if (recyclerView.layoutManager is LinearLayoutManager) {
-            val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            val holder = (recyclerView.findViewHolderForAdapterPosition(position) as FeedAdapter.FeedHolder)
-            holder.v.getVisibilityPercent()
+            val topPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            val bottomPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+            setPlayVideo(recyclerView, topPosition)
+            setPlayVideo(recyclerView, bottomPosition)
+        }
+    }
+
+    fun setPlayVideo(recyclerView: RecyclerView, position: Int) {
+        if (adapterModel.getItem(position).videoURL != null) {
+            val holder = recyclerView.findViewHolderForAdapterPosition(position) as FeedAdapter.FeedHolder
+            val percent = holder.v.getVisibilityPercent()
+            Logger.v("visible percent: $percent, position: $position")
+            if (percent >= 50) {
+                holder.v.playVideo()
+            } else {
+                holder.v.pauseVideo()
+            }
         }
     }
 
