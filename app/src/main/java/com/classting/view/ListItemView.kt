@@ -18,8 +18,9 @@ import kotlinx.android.synthetic.main.list_item.view.*
  */
 class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
-    private val rect : Rect = Rect()
-    lateinit var feed:Feed
+    private val rect: Rect = Rect()
+    lateinit var feed: Feed
+
     init {
         LayoutInflater.from(context).inflate(R.layout.list_item, this, true)
         useCompatPadding = true
@@ -37,13 +38,27 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         } else {
             photo.visibility = View.GONE
         }
+
+        if (feed.videoURL != null) {
+            classtingVideoView.setData(feed.videoURL)
+            classtingVideoView.visibility = View.VISIBLE
+        } else {
+            classtingVideoView.visibility = View.GONE
+        }
+
     }
 
     override fun getVisibilityPercent(): Int {
         var percent: Int = 100
         getLocalVisibleRect(rect)
-        Logger.v("rect top: " + rect.top + ", rect bottom: " + rect.bottom + ", height: " + height)
+        //Logger.v("rect top: " + rect.top + ", rect bottom: " + rect.bottom + ", height: " + height)
         percent = (height - rect.top) * 100 / height
+        if (feed.videoURL != null && percent >= 50) {
+            classtingVideoView.playVideo()
+        } else {
+            classtingVideoView.pauseVideo()
+
+        }
         return percent
     }
 

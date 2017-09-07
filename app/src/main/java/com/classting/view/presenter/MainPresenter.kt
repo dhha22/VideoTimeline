@@ -40,7 +40,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         if (recyclerView.layoutManager is LinearLayoutManager) {
             val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val holder = (recyclerView.findViewHolderForAdapterPosition(position) as FeedAdapter.FeedHolder)
-            Logger.v("view visible percent: " + holder.v.getVisibilityPercent())
+            holder.v.getVisibilityPercent()
         }
     }
 
@@ -55,11 +55,11 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         adapterModel.addItem(Feed(1, "이름1", "text, image 있음", R.drawable.sample1))
         adapterModel.addItem(Feed(2, "이름2", "text 만 있음"))
         adapterModel.addItem(Feed(3, "이름3", "text, image 있음", R.drawable.sample2))
-        adapterModel.addItem(Feed(4, "이름4", "text 만 있음"))
+        adapterModel.addItem(Feed(4, "이름4", "text 만 있음", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
         adapterModel.addItem(Feed(5, "이름5", "text 만 있음"))
         adapterModel.addItem(Feed(6, "이름6", "text 만 있음", R.drawable.sample1))
         adapterModel.addItem(Feed(7, "이름7", "text 만 있음", R.drawable.sample2))
-        adapterModel.addItem(Feed(8, "이름8", "text 만 있음"))
+        adapterModel.addItem(Feed(8, "이름8", "text 만 있음", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
         adapterModel.addItem(Feed(9, "이름9", "text 만 있음"))
 
     }
