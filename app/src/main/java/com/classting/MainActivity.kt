@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import com.classting.adapter.FeedAdapter
+import com.classting.model.Feed
 import com.classting.view.contract.MainContract
 import com.classting.view.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,6 +28,9 @@ class MainActivity : AppCompatActivity() , MainContract.View{
             presenter.adapterModel = it
             presenter.adapterView = it
         }
+        recyclerView.addOnScrollListener(presenter)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        presenter.addDummyData()
     }
+
 }
