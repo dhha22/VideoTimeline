@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.classting.adapter.contract.FeedAdapterContract
 import com.classting.listener.OnItemClickListener
+import com.classting.listener.VideoPlayState
+import com.classting.log.Logger
 import com.classting.model.Feed
 import com.classting.view.ListItemView
 
@@ -13,12 +15,12 @@ import com.classting.view.ListItemView
  * Created by DavidHa on 2017. 9. 6..
  */
 class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedHolder>(), FeedAdapterContract.Model, FeedAdapterContract.View {
-
     private val feeds: ArrayList<Feed> = ArrayList()
     private lateinit var itemClickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FeedHolder {
         return FeedHolder(ListItemView(context))
+
     }
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
@@ -46,6 +48,7 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
         feeds.clear()
         notifyDataSetChanged()
     }
+
 
     inner class FeedHolder(view: View) : RecyclerView.ViewHolder(view) {
         val v: ListItemView by lazy { view as ListItemView }

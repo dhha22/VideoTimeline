@@ -1,6 +1,7 @@
 package com.classting.view
 
 import android.content.Context
+import android.graphics.Rect
 import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -17,12 +18,15 @@ import kotlinx.android.synthetic.main.list_item.view.*
  */
 class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
+    private val rect : Rect = Rect()
+    lateinit var feed:Feed
     init {
         LayoutInflater.from(context).inflate(R.layout.list_item, this, true)
         useCompatPadding = true
     }
 
     fun setData(feed: Feed) {
+        this.feed = feed
         Picasso.with(context).load(R.drawable.profile).fit().centerCrop().into(profileImage)
         nameTxt.text = feed.userName
         contentTxt.text = feed.text
@@ -34,6 +38,15 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             photo.visibility = View.GONE
         }
     }
+
+    override fun getVisibilityPercent(): Int {
+        var percent: Int = 100
+        getLocalVisibleRect(rect)
+        Logger.v("rect top: " + rect.top + ", rect bottom: " + rect.bottom + ", height: " + height)
+        percent = (height - rect.top) * 100 / height
+        return percent
+    }
+
 
     override fun playVideo() {
         Logger.v("play video")
