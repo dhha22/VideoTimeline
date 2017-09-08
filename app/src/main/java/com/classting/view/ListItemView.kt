@@ -23,8 +23,7 @@ import rx.schedulers.Schedulers
 class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
     private val videoRect: Rect = Rect()
-    lateinit var feed: Feed
-
+    private lateinit var feed: Feed
     init {
         LayoutInflater.from(context).inflate(R.layout.list_item, this, true)
         useCompatPadding = true
@@ -58,7 +57,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     override fun getVisibilityPercent(): Int {
         var percent: Int = 0
         classtingVideoView.getLocalVisibleRect(videoRect)   // 현재 Video View의 위치를 가져옴
-        Logger.v("rect top: " + videoRect.top + ", rect bottom: " + videoRect.bottom + ", view height: " + classtingVideoView.height)
+        //Logger.v("rect top: " + videoRect.top + ", rect bottom: " + videoRect.bottom + ", view height: " + classtingVideoView.height)
         if (videoRect.bottom == classtingVideoView.height) {
             percent = (videoRect.bottom - videoRect.top) * 100 / videoRect.bottom   // first item
         } else if ((videoRect.top == 0)) {

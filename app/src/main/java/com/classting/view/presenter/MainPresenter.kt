@@ -9,6 +9,7 @@ import com.classting.adapter.contract.FeedAdapterContract
 import com.classting.listener.OnItemClickListener
 import com.classting.log.Logger
 import com.classting.model.Feed
+import com.classting.model.TempVideoInfo
 import com.classting.view.contract.MainContract
 import rx.Observable
 import rx.Scheduler
@@ -21,8 +22,8 @@ import java.util.*
  */
 class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.OnScrollListener() {
     lateinit var presenter: MainPresenter
-    var isPlaying: Boolean = false
     lateinit var adapterModel: FeedAdapterContract.Model
+    var curPlayingVideoPos: Int? = null
     var adapterView: FeedAdapterContract.View? = null
         set(value) {
             field = value
@@ -47,21 +48,24 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
             val topPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val bottomPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
-            for (pos in topPosition..bottomPosition) {
-                Observable.just(getFeedHolder(recyclerView, pos))
-                        .filter { adapterModel.getItem(pos).videoURL != null }
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ setPlayVideo(it) }, {})
-            }
+            Observable.range(topPosition, bottomPosition)   // range (topPosition ~ bottomPosition)
+                    .filter { adapterModel.getItem(it).videoURL != null }   // 비디오 동영상일 경우만 확인
+                    .map { TempVideoInfo(it, getFeedHolder(recyclerView, it).v.getVisibilityPercent()) }    // 해당 포지션값의 visible percent를 구함
+                    .subscribe({ setPlayVideo(recyclerView, it.position, it.percent) }, {}, { })
+
         }
     }
 
-    fun setPlayVideo(holder: FeedAdapter.FeedHolder) {
-        val percent = holder.v.getVisibilityPercent()
-        if (percent >= 50) {    // 50퍼센트 이상
-            holder.v.playVideo()
+    fun setPlayVideo(recyclerView: RecyclerView, position: Int, percent: Int) {
+        val holder = getFeedHolder(recyclerView, position)
+        Logger.v("position: $position, percent: $percent")
+        if (percent >= 50) {    // visible 50퍼센트 이상
+            if (curPlayingVideoPos == null || position == curPlayingVideoPos) {
+                holder.v.playVideo()
+                curPlayingVideoPos = position
+            }
         } else {
+            if (position == curPlayingVideoPos) curPlayingVideoPos = null 
             holder.v.pauseVideo()
         }
         holder.v.setPercent(percent)
