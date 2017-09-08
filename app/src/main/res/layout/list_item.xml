@@ -48,6 +48,6 @@
     <com.classting.view.ClasstingVideoView
         android:id="@+id/classtingVideoView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_below="@id/contentTxt" />
 </RelativeLayout>

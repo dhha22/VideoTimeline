@@ -8,4 +8,5 @@ interface VideoPlayState {
     fun playVideo()
     fun pauseVideo()
     fun setPercent(percent:Int)
+    fun setContinuePlay(positionMs : Long)
 }

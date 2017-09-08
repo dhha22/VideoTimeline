@@ -9,6 +9,7 @@ import com.classting.model.Feed
 interface FeedAdapterContract {
     interface View {
         fun setOnItemClickListener(onItemClickListener: OnItemClickListener)
+        fun setContinuePlay(positionMs : Long)
     }
 
     interface Model {

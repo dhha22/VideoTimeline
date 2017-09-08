@@ -1,5 +1,8 @@
 package com.classting.view.contract
 
+import android.content.Intent
+import android.support.v7.widget.RecyclerView
+
 /**
  * Created by DavidHa on 2017. 9. 6..
  */
@@ -9,6 +12,7 @@ interface MainContract {
     }
 
     interface Presenter {
-
+        fun pauseVideo(recyclerView: RecyclerView)
+        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent)
     }
 }

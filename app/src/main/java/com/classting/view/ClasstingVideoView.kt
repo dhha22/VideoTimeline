@@ -55,6 +55,11 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         player.prepare(mediaSource)
     }
 
+    fun showController(){
+        videoView.useController = true
+        videoView.showController()
+    }
+
     fun playVideo() {
         if (!player.playWhenReady) {
             Logger.v("play video")
@@ -68,6 +73,14 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
             Logger.v("pause video")
             player.playWhenReady = false
         }
+    }
+
+    fun getCurrentPosition() :Long {
+        return player.currentPosition
+    }
+
+    fun continuePlay(positionMs : Long){
+        player.seekTo(positionMs)
     }
 
 }

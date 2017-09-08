@@ -8,14 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import com.classting.R
 import com.classting.listener.VideoPlayState
-import com.classting.log.Logger
 import com.classting.model.Feed
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Action1
-import rx.schedulers.Schedulers
 
 /**
  * Created by DavidHa on 2017. 9. 6..
@@ -77,5 +72,13 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         if (feed.videoURL != null) {
             classtingVideoView.pauseVideo()
         }
+    }
+
+    fun getVideoCurrentPosition() : Long{
+        return classtingVideoView.getCurrentPosition()
+    }
+
+    override fun setContinuePlay(positionMs: Long) {
+        classtingVideoView.continuePlay(positionMs)
     }
 }
