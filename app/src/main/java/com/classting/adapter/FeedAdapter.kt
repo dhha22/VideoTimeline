@@ -24,7 +24,7 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
     }
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        holder.v.setData(feeds[position])
+        (holder.v as ListItemView).setData(feeds[position])
     }
 
     override fun getItemCount(): Int {
@@ -50,11 +50,11 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
     }
 
 
-    inner class FeedHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val v: ListItemView by lazy { view as ListItemView }
+    inner class FeedHolder(view: View) : Holder(view) {
+        override var v: VideoPlayState = view as ListItemView
 
         init {
-            v.setOnClickListener { itemClickListener.onItemClick(it, adapterPosition) }
+            (v as ListItemView).setOnClickListener { itemClickListener.onItemClick(it, adapterPosition) }
         }
     }
 }

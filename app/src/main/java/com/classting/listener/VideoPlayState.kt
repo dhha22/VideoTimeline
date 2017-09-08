@@ -7,4 +7,5 @@ interface VideoPlayState {
     fun getVisibilityPercent() : Int
     fun playVideo()
     fun pauseVideo()
+    fun setPercent(percent:Int)
 }

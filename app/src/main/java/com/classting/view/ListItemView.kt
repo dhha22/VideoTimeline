@@ -50,7 +50,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
-    fun setPercent(percent: Int) {
+    override fun setPercent(percent: Int) {
         percentTxt.text = String.format("%d", percent)
     }
 
