@@ -12,6 +12,10 @@ import com.classting.log.Logger
 import com.classting.model.Feed
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Action1
+import rx.schedulers.Schedulers
 
 /**
  * Created by DavidHa on 2017. 9. 6..
@@ -45,7 +49,10 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         } else {
             classtingVideoView.visibility = View.GONE
         }
+    }
 
+    fun setPercent(percent: Int) {
+        percentTxt.text = String.format("%d", percent)
     }
 
     override fun getVisibilityPercent(): Int {

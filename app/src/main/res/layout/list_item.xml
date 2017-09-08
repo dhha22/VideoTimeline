@@ -25,6 +25,13 @@
         android:text="name" />
 
     <TextView
+        android:id="@+id/percentTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="14dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
         android:id="@+id/contentTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

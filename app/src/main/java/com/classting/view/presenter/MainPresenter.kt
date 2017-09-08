@@ -10,12 +10,18 @@ import com.classting.listener.OnItemClickListener
 import com.classting.log.Logger
 import com.classting.model.Feed
 import com.classting.view.contract.MainContract
+import rx.Observable
+import rx.Scheduler
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import java.util.*
 
 /**
  * Created by DavidHa on 2017. 9. 6..
  */
 class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.OnScrollListener() {
     lateinit var presenter: MainPresenter
+    var isPlaying: Boolean = false
     lateinit var adapterModel: FeedAdapterContract.Model
     var adapterView: FeedAdapterContract.View? = null
         set(value) {
@@ -40,23 +46,31 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         if (recyclerView.layoutManager is LinearLayoutManager) {
             val topPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val bottomPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-            setPlayVideo(recyclerView, topPosition)
-            setPlayVideo(recyclerView, bottomPosition)
-        }
-    }
 
-    fun setPlayVideo(recyclerView: RecyclerView, position: Int) {
-        if (adapterModel.getItem(position).videoURL != null) {
-            val holder = recyclerView.findViewHolderForAdapterPosition(position) as FeedAdapter.FeedHolder
-            val percent = holder.v.getVisibilityPercent()
-            Logger.v("visible percent: $percent, position: $position")
-            if (percent >= 50) {
-                holder.v.playVideo()
-            } else {
-                holder.v.pauseVideo()
+            for (pos in topPosition..bottomPosition) {
+                Observable.just(getFeedHolder(recyclerView, pos))
+                        .filter { adapterModel.getItem(pos).videoURL != null }
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ setPlayVideo(it) }, {})
             }
         }
     }
+
+    fun setPlayVideo(holder: FeedAdapter.FeedHolder) {
+        val percent = holder.v.getVisibilityPercent()
+        if (percent >= 50) {    // 50퍼센트 이상
+            holder.v.playVideo()
+        } else {
+            holder.v.pauseVideo()
+        }
+        holder.v.setPercent(percent)
+    }
+
+    fun getFeedHolder(recyclerView: RecyclerView, position: Int): FeedAdapter.FeedHolder {
+        return recyclerView.findViewHolderForAdapterPosition(position) as FeedAdapter.FeedHolder
+    }
+
 
     // feed list item 클릭했을 경우
     override fun onItemClick(view: View, position: Int) {
@@ -70,7 +84,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         adapterModel.addItem(Feed(2, "이름2", "text 만 있음"))
         adapterModel.addItem(Feed(3, "이름3", "text, image 있음", R.drawable.sample2))
         adapterModel.addItem(Feed(4, "이름4", "text 만 있음", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
-        adapterModel.addItem(Feed(5, "이름5", "text 만 있음"))
+        adapterModel.addItem(Feed(5, "이름5", "text 만 있음", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
         adapterModel.addItem(Feed(6, "이름6", "text 만 있음", R.drawable.sample1))
         adapterModel.addItem(Feed(7, "이름7", "text 만 있음", R.drawable.sample2))
         adapterModel.addItem(Feed(8, "이름8", "text 만 있음", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
