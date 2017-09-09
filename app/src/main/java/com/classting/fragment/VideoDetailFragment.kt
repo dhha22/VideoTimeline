@@ -1,5 +1,6 @@
 package com.classting.fragment
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -30,17 +31,22 @@ class VideoDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        videoURL = arguments.getString("videoURL")
-        positionMs = arguments.getLong("positionMs")
+        Logger.v("fragment on create")
+        if (savedInstanceState == null) {
+            videoURL = arguments.getString("videoURL")
+            positionMs = arguments.getLong("positionMs")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Logger.v("fragment on create view")
         val view = inflater?.inflate(R.layout.fragment_video_detail, container, false)
         return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Logger.v("fragment on view crated")
         classtingVideoView.showController()
         classtingVideoView.setData(videoURL)
         classtingVideoView.continuePlay(positionMs)
