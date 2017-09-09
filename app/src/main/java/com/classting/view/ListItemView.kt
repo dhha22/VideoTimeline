@@ -8,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import com.classting.R
 import com.classting.listener.VideoPlayState
+import com.classting.log.Logger
 import com.classting.model.Feed
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
+import rx.android.schedulers.AndroidSchedulers
+import rx.subjects.PublishSubject
 
 /**
  * Created by DavidHa on 2017. 9. 6..
@@ -19,9 +22,13 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
     private val videoRect: Rect = Rect()
     private lateinit var feed: Feed
+    private val subject = PublishSubject.create<Boolean>()
+
     init {
         LayoutInflater.from(context).inflate(R.layout.list_item, this, true)
         useCompatPadding = true
+        subject.observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ videoCoverState(it) }, { Logger.e(it) })
     }
 
     fun setData(feed: Feed) {
@@ -61,26 +68,40 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         return percent
     }
 
-
-    override fun playVideo() {
-        if (feed.videoURL != null) {
+    private fun videoCoverState(isPlaying: Boolean) {
+        Logger.v("video cover state: $isPlaying")
+        if (isPlaying) {
             videoCover.visibility = View.GONE
+        } else {
+            videoCover.visibility = View.VISIBLE
+        }
+    }
+
+
+    override fun playVideo(positionMs: Long) {
+        if (feed.videoURL != null && !classtingVideoView.isPlaying()) {
+            if (positionMs > 0) feed.playingTime = positionMs   // video detail 재생시간 업데이트
+            Logger.v("get playing time: " + feed.playingTime)
+            setContinuePlay(feed.playingTime)
             classtingVideoView.playVideo()
+            subject.onNext(true)
         }
     }
 
     override fun pauseVideo() {
-        if (feed.videoURL != null) {
-            videoCover.visibility = View.VISIBLE
+        if (feed.videoURL != null && classtingVideoView.isPlaying()) {
+            feed.playingTime = getVideoCurrentPosition()
+            Logger.v("save playing time: " + feed.playingTime + 1)
             classtingVideoView.pauseVideo()
+            subject.onNext(false)
         }
     }
 
-    fun getVideoCurrentPosition() : Long{
+    fun getVideoCurrentPosition(): Long {
         return classtingVideoView.getCurrentPosition()
     }
 
-    override fun setContinuePlay(positionMs: Long) {
+    private fun setContinuePlay(positionMs: Long) {
         classtingVideoView.continuePlay(positionMs)
     }
 }

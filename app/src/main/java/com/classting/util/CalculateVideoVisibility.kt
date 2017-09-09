@@ -13,42 +13,48 @@ import rx.schedulers.Schedulers
  */
 class CalculateVideoVisibility {
 
-    private var curPlayingVideoPos: Int? = null
+    private var curPlayingVideoPos: Int = -1
     private var topPosition: Int = 0
     private var bottomPosition: Int = 0
 
     fun onScroll(recyclerView: RecyclerView, topPosition: Int, bottomPosition: Int, filter: (position: Int) -> Boolean) {
         this.topPosition = topPosition
         this.bottomPosition = bottomPosition
-        Observable.range(topPosition, bottomPosition)   // range (topPosition ~ bottomPosition)
-                .filter { filter.invoke(it) }   // 비디오 동영상일 경우만 확인
-                .map { TempVideoInfo(it, getHolder(recyclerView, it).v.getVisibilityPercent()) }    // 해당 포지션값의 visible percent를 구함
-                .subscribe({ setPlayVideo(recyclerView, it.position, it.percent) }, {})
+        Logger.v("top position: $topPosition , bottom position: $bottomPosition")
+
+        Observable.range(topPosition, bottomPosition - topPosition + 1)   // range (n,m) = n ~ n+m-1
+                .filter { filter.invoke(it) }// 비디오 동영상일 경우만 확인
+                .distinct()
+                .subscribeOn(Schedulers.computation())
+                .subscribe({ setPlayVideo(recyclerView, it) }, { Logger.e(it) })
+
     }
 
-    private fun setPlayVideo(recyclerView: RecyclerView, position: Int, percent: Int) {
-        val holder = getHolder(recyclerView, position)
-        Logger.v("position: $position, percent: $percent")
-        if (percent >= 50) {    // visible 50퍼센트 이상
-            if (curPlayingVideoPos == null || position == curPlayingVideoPos) {
+    private fun setPlayVideo(recyclerView: RecyclerView, position: Int) {
+        Logger.v("position: $position, curPlayingVideoPos: $curPlayingVideoPos")
+        if (curPlayingVideoPos < topPosition) curPlayingVideoPos = -1   // 현재 재생 포지션값이 화면에 보이지 않으면 재생 취소
+        val holder: Holder = getHolder(recyclerView, position)
+        val percent: Int? = holder.v.getVisibilityPercent() // 해당 포지션값의 visible percent를 구함
+        if (percent != null) {
+            if (percent >= 50 && (curPlayingVideoPos == -1 || position <= curPlayingVideoPos)) {
                 holder.v.playVideo()
                 curPlayingVideoPos = position
+            } else {
+                if (position == curPlayingVideoPos) curPlayingVideoPos = -1
+                holder.v.pauseVideo()
             }
-        } else {
-            if (position == curPlayingVideoPos) curPlayingVideoPos = null
-            holder.v.pauseVideo()
         }
-        //holder.v.setPercent(percent)
     }
 
     fun pauseVideo(recyclerView: RecyclerView) {
-        if (curPlayingVideoPos != null) {
-            getHolder(recyclerView, curPlayingVideoPos as Int).v.pauseVideo()
-            curPlayingVideoPos = null
+        if (curPlayingVideoPos != -1) {
+            getHolder(recyclerView, curPlayingVideoPos).v.pauseVideo()
+            curPlayingVideoPos = -1
         }
     }
 
     private fun getHolder(recyclerView: RecyclerView, position: Int): Holder {
+        Logger.v("holder position: " + position)
         return recyclerView.findViewHolderForAdapterPosition(position) as Holder
     }
 

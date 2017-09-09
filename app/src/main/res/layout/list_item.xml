@@ -55,12 +55,12 @@
         <com.classting.view.ClasstingVideoView
             android:id="@+id/classtingVideoView"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="240dp" />
 
         <ImageView
             android:id="@+id/videoCover"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="240dp"
             android:background="@drawable/video_layout_cover" />
     </RelativeLayout>
 </RelativeLayout>

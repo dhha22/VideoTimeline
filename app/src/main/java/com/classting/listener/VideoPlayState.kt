@@ -5,8 +5,7 @@ package com.classting.listener
  */
 interface VideoPlayState {
     fun getVisibilityPercent() : Int
-    fun playVideo()
+    fun playVideo(positionMs: Long = 0)
     fun pauseVideo()
     fun setPercent(percent:Int)
-    fun setContinuePlay(positionMs : Long)
 }

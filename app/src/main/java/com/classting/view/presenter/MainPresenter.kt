@@ -36,10 +36,11 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
             if (recyclerView.layoutManager is LinearLayoutManager) {
-                //Logger.v("find first visible item position: " + (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition())
-                //Logger.v("find last visible item position: " + (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition())
-
-            }
+               /* val topPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val bottomPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                Logger.v("scroll state idle")
+                calculateVideoVisibility.onScroll(recyclerView, topPosition, bottomPosition, { adapterModel.getItem(it).videoURL != null })
+            */}
         }
     }
 

@@ -83,4 +83,8 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         player.seekTo(positionMs)
     }
 
+    fun isPlaying() : Boolean {
+        return player.playWhenReady
+    }
+
 }
