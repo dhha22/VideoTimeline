@@ -28,8 +28,8 @@
         android:id="@+id/percentTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="14dp"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp" />
 
     <TextView
         android:id="@+id/contentTxt"
@@ -45,9 +45,22 @@
         android:layout_height="200dp"
         android:layout_below="@id/contentTxt" />
 
-    <com.classting.view.ClasstingVideoView
-        android:id="@+id/classtingVideoView"
+    <RelativeLayout
+        android:id="@+id/videoLayout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/contentTxt" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contentTxt">
+
+
+        <com.classting.view.ClasstingVideoView
+            android:id="@+id/classtingVideoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <ImageView
+            android:id="@+id/videoCover"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/video_layout_cover" />
+    </RelativeLayout>
 </RelativeLayout>

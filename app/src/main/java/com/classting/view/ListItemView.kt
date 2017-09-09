@@ -39,9 +39,9 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
 
         if (feed.videoURL != null) {
             classtingVideoView.setData(feed.videoURL)
-            classtingVideoView.visibility = View.VISIBLE
+            videoLayout.visibility = View.VISIBLE
         } else {
-            classtingVideoView.visibility = View.GONE
+            videoLayout.visibility = View.GONE
         }
     }
 
@@ -64,12 +64,14 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
 
     override fun playVideo() {
         if (feed.videoURL != null) {
+            videoCover.visibility = View.GONE
             classtingVideoView.playVideo()
         }
     }
 
     override fun pauseVideo() {
         if (feed.videoURL != null) {
+            videoCover.visibility = View.VISIBLE
             classtingVideoView.pauseVideo()
         }
     }
