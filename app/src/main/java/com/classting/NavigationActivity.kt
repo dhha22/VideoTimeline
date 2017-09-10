@@ -3,6 +3,7 @@ package com.classting
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v4.app.Fragment
 
@@ -24,6 +25,9 @@ class NavigationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Logger.v("navigation activity onCreate")
+        if(fragment is VideoDetailFragment) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
         setContentView(R.layout.activity_navigation)
         supportFragmentManager.beginTransaction().replace(R.id.frame, fragment).commit()
     }
