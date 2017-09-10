@@ -67,9 +67,15 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
     // feed list item 클릭했을 경우
     override fun onItemClick(view: View, position: Int) {
         val videoURL = adapterModel?.getItem(position)?.videoURL
-        if (videoURL != null) {    // video item 클릭했을 경우 상세페이지로 이동
-            (view as ListItemView).pauseVideo()
-            Navigator.goVideoDetail(context, position, videoURL, view.getVideoCurrentTime())
+        if (videoURL != null) {
+            if((view as ListItemView).isVideoEnded()){  // 완료된 비디오를 누를경우 처음부터 재생
+                Logger.v("video is end")
+                view.setContinuePlay(0)
+                view.playVideo()
+            }else{   // video item 클릭했을 경우 상세페이지로 이동
+                view.pauseVideo()
+                Navigator.goVideoDetail(context, position, videoURL, view.getVideoCurrentTime())
+            }
         }
     }
 

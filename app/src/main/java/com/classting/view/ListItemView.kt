@@ -22,13 +22,16 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     : CardView(context, attributeSet), VideoPlayState {
     private val videoRect: Rect = Rect()
     private lateinit var feed: Feed
-    private val subject = PublishSubject.create<Boolean>()
+    private val playStateSubject = PublishSubject.create<Boolean>()
 
     init {
         LayoutInflater.from(context).inflate(R.layout.list_item, this, true)
         useCompatPadding = true
-        subject.observeOn(AndroidSchedulers.mainThread())
+        playStateSubject
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ videoCoverState(it) }, { Logger.e(it) })
+        classtingVideoView.setPlayerState(playStateSubject)
     }
 
     fun setData(feed: Feed) {
@@ -88,8 +91,8 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             if (positionMs > 0) feed.playingTime = positionMs   // video detail 재생시간 업데이트
             Logger.v("get playing time: " + feed.playingTime)
             setContinuePlay(feed.playingTime)
-            classtingVideoView?.playVideo()
-            subject.onNext(true)
+            classtingVideoView.playVideo()
+            playStateSubject.onNext(true)
         }
     }
 
@@ -98,7 +101,8 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             feed.playingTime = getVideoCurrentTime()
             Logger.v("save playing time: " + feed.playingTime + 1)
             classtingVideoView.pauseVideo()
-            subject.onNext(false)
+            playStateSubject.onNext(false)
+
         }
     }
 
@@ -106,7 +110,12 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         return classtingVideoView.getCurrentPosition()
     }
 
-    private fun setContinuePlay(positionMs: Long) {
+    fun setContinuePlay(positionMs: Long) {
         classtingVideoView.continuePlay(positionMs)
     }
+
+    fun isVideoEnded(): Boolean {
+        return classtingVideoView.isVideoEnded()
+    }
+
 }
