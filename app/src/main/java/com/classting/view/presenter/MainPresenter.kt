@@ -71,14 +71,14 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
     // feed list item 클릭했을 경우
     override fun onItemClick(view: View, position: Int) {
         val videoURL = adapterModel?.getItem(position)?.videoURL
+        val feedId = adapterModel?.getItem(position)?.id
         if (videoURL != null) {
             if ((view as ListItemView).isVideoEnded()) {  // 완료된 비디오를 누를경우 처음부터 재생
-                Logger.v("video is end")
                 view.setContinuePlay(0)
                 view.playVideo()
             } else {   // video item 클릭했을 경우 상세페이지로 이동
                 view.pauseVideo()
-                Navigator.goVideoDetail(context, position, videoURL, view.getVideoCurrentTime())
+                Navigator.goVideoDetail(context, feedId ?: -1, position, videoURL, view.getVideoCurrentTime(), view.isRecorded())
             }
         }
     }
@@ -95,7 +95,9 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         }
     }
 
-    // make dummy data 15개
+    /**
+     * Dummy Data Feed(id, userName, text, photoURL, videoURL)
+     */
     fun addDummyData() {
         adapterModel?.addItem(Feed(0, "이름0", "text 만 있음"))
         adapterModel?.addItem(Feed(1, "이름1", "text, image 있음", R.drawable.sample1))

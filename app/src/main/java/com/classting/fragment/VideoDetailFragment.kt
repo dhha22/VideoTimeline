@@ -1,6 +1,5 @@
 package com.classting.fragment
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -15,17 +14,21 @@ import kotlin.properties.Delegates
  * Created by DavidHa on 2017. 9. 8..
  */
 class VideoDetailFragment : Fragment() {
+    private var feedId by Delegates.notNull<Long>()
     private lateinit var videoURL: String
-    var position : Int by Delegates.notNull<Int>()
+    var position  by Delegates.notNull<Int>()
     private var positionMs: Long by Delegates.notNull()
+    private var isRecorded : Boolean by Delegates.notNull()
 
     companion object {
-        fun getInstance(position: Int, videoURL: String, positionMs: Long): VideoDetailFragment {
+        fun getInstance(feedId: Long, position: Int, videoURL: String, positionMs: Long, isRecorded: Boolean): VideoDetailFragment {
             val fragment = VideoDetailFragment()
             val bundle = Bundle()
+            bundle.putLong("feedId", feedId)
             bundle.putInt("position", position)
             bundle.putString("videoURL", videoURL)
             bundle.putLong("positionMs", positionMs)
+            bundle.putBoolean("isRecorded", isRecorded)
             fragment.arguments = bundle
             return fragment
         }
@@ -35,9 +38,11 @@ class VideoDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
         Logger.v("fragment on create")
         if (savedInstanceState == null) {
+            feedId = arguments.getLong("feedId")
             position = arguments.getInt("position")
             videoURL = arguments.getString("videoURL")
             positionMs = arguments.getLong("positionMs")
+            isRecorded = arguments.getBoolean("isRecorded")
         }
     }
 
@@ -51,20 +56,15 @@ class VideoDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Logger.v("fragment on view crated")
         classtingVideoView.showController() // 비디오 플레이어 컨트롤러
-        classtingVideoView.setData(videoURL)
+        classtingVideoView.setData(feedId, videoURL)
         classtingVideoView.continuePlay(positionMs)
         classtingVideoView.playVideo()
+        classtingVideoView.isRecorded = isRecorded
     }
 
     override fun onPause() {
         super.onPause()
         classtingVideoView.pauseVideo()
     }
-
-    override fun onDestroy() {
-        classtingVideoView.release()
-        super.onDestroy()
-    }
-
 
 }

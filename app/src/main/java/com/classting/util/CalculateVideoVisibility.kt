@@ -25,9 +25,6 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
      */
     fun onScrollStateChanged(topPosition: Int, bottomPosition: Int) {
         this.bottomPosition = bottomPosition
-
-        // 현재 비디오 재생 위치가 top ~ bottom 사이에 있으면 top ~ curPlayingVideoPos 까지 조회
-        if (curPlayingVideoPos in topPosition..bottomPosition) this.bottomPosition = curPlayingVideoPos
         Logger.v("top position: $topPosition , bottom position: $bottomPosition")
         subscription = Observable
                 .range(topPosition, this.bottomPosition - topPosition + 1)   // range (n,m) = n ~ n+m-1
@@ -58,10 +55,8 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
 
         // 화면에 비디오가 50% 이상 보일 경우 && 화면에 두개이상 동영상이 있을경우 상위 위치한 동영상만 play
         if (percent >= 50 && (curPlayingVideoPos == -1 || position <= curPlayingVideoPos)) {
-            if (curPlayingVideoPos != position) {
-                curPlayingVideoPos = position
-                view.playVideo()
-            }
+            curPlayingVideoPos = position
+            view.playVideo()
         } else {
             if (position == curPlayingVideoPos) curPlayingVideoPos = -1
             view.pauseVideo()

@@ -12,6 +12,7 @@ import com.classting.log.Logger
 import com.classting.model.Feed
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.subjects.PublishSubject
 
@@ -32,7 +33,6 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ videoCoverState(it) }, { Logger.e(it) })
         classtingVideoView.setPlayerState(playStateSubject)
-        classtingVideoView.addVideoListener()
     }
 
     fun setData(feed: Feed) {
@@ -50,7 +50,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         }
 
         if (feed.videoURL != null) {
-            classtingVideoView.setData(feed.videoURL)
+            classtingVideoView.setData(feed.id, feed.videoURL)
             videoLayout.visibility = View.VISIBLE
             classtingVideoView.visibility = View.VISIBLE
         } else {
@@ -78,7 +78,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     }
 
     private fun videoCoverState(isPlaying: Boolean) {
-        Logger.v("video cover state: $isPlaying")
+        Logger.v("playWhenReady: $isPlaying")
         if (isPlaying) {
             videoCover.visibility = View.GONE
         } else {
@@ -93,7 +93,6 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             Logger.v("get playing time: " + feed.playingTime)
             setContinuePlay(feed.playingTime)
             classtingVideoView.playVideo()
-            playStateSubject.onNext(true)
         }
     }
 
@@ -102,8 +101,6 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             feed.playingTime = getVideoCurrentTime()
             Logger.v("save playing time: " + feed.playingTime + 1)
             classtingVideoView.pauseVideo()
-            playStateSubject.onNext(false)
-
         }
     }
 
@@ -117,6 +114,10 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
 
     fun isVideoEnded(): Boolean {
         return classtingVideoView.isVideoEnded()
+    }
+
+    fun isRecorded() : Boolean{
+        return classtingVideoView.isRecorded
     }
 
 }
