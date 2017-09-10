@@ -1,7 +1,6 @@
 package com.classting.view
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import com.classting.log.Logger
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -33,7 +31,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
     private var bandwidthMeter: BandwidthMeter
     private var videoURL: String? = null
     private var isEnd: Boolean = false
-    private lateinit var playStateSubject : PublishSubject<Boolean>
+    private lateinit var playStateSubject: PublishSubject<Boolean>
 
     init {
         LayoutInflater.from(context).inflate(R.layout.classting_vidieo, this, true)
@@ -51,17 +49,14 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         videoView.player = player
         videoView.useController = false
         player.playWhenReady = false
-        player.addListener(this)
     }
 
     fun setData(videoURL: String) {
-        if (this.videoURL == null) {
-            val extractorsFactory = DefaultExtractorsFactory()
-            val mediaSource = ExtractorMediaSource(Uri.parse(videoURL),
-                    mediaDataSourceFactory, extractorsFactory, null, null)
-            player.prepare(mediaSource)
-            this.videoURL = videoURL
-        }
+        val extractorsFactory = DefaultExtractorsFactory()
+        val mediaSource = ExtractorMediaSource(Uri.parse(videoURL),
+                mediaDataSourceFactory, extractorsFactory, null, null)
+        this.videoURL = videoURL
+        player.prepare(mediaSource)
     }
 
     fun showController() {
@@ -71,7 +66,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
 
     fun playVideo() {
         if (!player.playWhenReady) {
-            Logger.v("play video")
+            Logger.v("play video $videoURL")
             player.playWhenReady = true
         }
     }
@@ -83,8 +78,12 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    fun release() {
+        player.release()
+    }
 
-    fun getCurrentPosition(): Long {
+
+    fun getCurrentTime(): Long {
         return player.currentPosition
     }
 
@@ -96,28 +95,20 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         return player.playWhenReady
     }
 
-    fun isVideoEnded() : Boolean{
+    fun isVideoEnded(): Boolean {
         return isEnd
     }
 
-    fun setPlayerState(playStateSubject: PublishSubject<Boolean>){
+    fun addVideoListener(){
+        player.addListener(this)
+    }
+
+    fun setPlayerState(playStateSubject: PublishSubject<Boolean>) {
         this.playStateSubject = playStateSubject
     }
 
-    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-
-    }
-
-    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-
-    }
-
-    override fun onPlayerError(error: ExoPlaybackException?) {
-
-    }
-
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        Logger.v("player state changed: $playbackState, playWhenReady: $playWhenReady" )
+        Logger.v("player state changed: $playbackState, playWhenReady: $playWhenReady")
         player.playWhenReady = playWhenReady
         if (playbackState == Player.STATE_ENDED) {
             playStateSubject.onNext(false)
@@ -125,25 +116,30 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         } else if (playbackState == Player.STATE_READY) {
             playStateSubject.onNext(true)
             isEnd = false
-        } else if(!playWhenReady) {
+        } else if (!playWhenReady) {
             playStateSubject.onNext(false)
         }
     }
 
-    override fun onLoadingChanged(isLoading: Boolean) {
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
+    }
 
+    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
+    }
+
+    override fun onPlayerError(error: ExoPlaybackException?) {
+    }
+
+    override fun onLoadingChanged(isLoading: Boolean) {
     }
 
     override fun onPositionDiscontinuity() {
-
     }
 
     override fun onRepeatModeChanged(repeatMode: Int) {
-
     }
 
     override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
-
     }
 
 }

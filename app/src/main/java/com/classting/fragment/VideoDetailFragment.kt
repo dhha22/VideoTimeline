@@ -50,7 +50,7 @@ class VideoDetailFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Logger.v("fragment on view crated")
-        classtingVideoView.showController()
+        classtingVideoView.showController() // 비디오 플레이어 컨트롤러
         classtingVideoView.setData(videoURL)
         classtingVideoView.continuePlay(positionMs)
         classtingVideoView.playVideo()
@@ -59,6 +59,11 @@ class VideoDetailFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         classtingVideoView.pauseVideo()
+    }
+
+    override fun onDestroy() {
+        classtingVideoView.release()
+        super.onDestroy()
     }
 
 

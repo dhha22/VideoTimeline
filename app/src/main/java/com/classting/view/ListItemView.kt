@@ -32,6 +32,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ videoCoverState(it) }, { Logger.e(it) })
         classtingVideoView.setPlayerState(playStateSubject)
+        classtingVideoView.addVideoListener()
     }
 
     fun setData(feed: Feed) {
@@ -107,7 +108,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
     }
 
     fun getVideoCurrentTime(): Long {
-        return classtingVideoView.getCurrentPosition()
+        return classtingVideoView.getCurrentTime()
     }
 
     fun setContinuePlay(positionMs: Long) {
