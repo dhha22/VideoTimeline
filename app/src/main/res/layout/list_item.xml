@@ -43,24 +43,29 @@
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:visibility="gone"
         android:layout_below="@id/contentTxt" />
 
     <RelativeLayout
         android:id="@+id/videoLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
+        android:visibility="gone"
+        android:background="@color/black"
         android:layout_below="@id/contentTxt">
 
 
         <com.classting.view.ClasstingVideoView
             android:id="@+id/classtingVideoView"
             android:layout_width="match_parent"
-            android:layout_height="240dp" />
+            android:layout_height="240dp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/videoCover"
             android:layout_width="match_parent"
             android:layout_height="240dp"
+            android:visibility="gone"
             android:background="@drawable/video_layout_cover" />
     </RelativeLayout>
 </RelativeLayout>

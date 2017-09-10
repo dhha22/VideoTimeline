@@ -33,6 +33,7 @@ class NavigationActivity : AppCompatActivity() {
         val fragment = supportFragmentManager.findFragmentById(R.id.frame)
         if (fragment is VideoDetailFragment) {  // Video 상세화면에서 Back 키 눌렀을 경우 Video Position 을 가져온다
             val intent = Intent()
+            intent.putExtra("position", fragment.position)
             intent.putExtra("positionMs", fragment.classtingVideoView.getCurrentPosition())
             setResult(Activity.RESULT_OK, intent)
         }

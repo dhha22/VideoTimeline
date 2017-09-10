@@ -33,6 +33,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
 
     fun setData(feed: Feed) {
         this.feed = feed
+        feed.view = this
         Picasso.with(context).load(R.drawable.profile).fit().centerCrop().into(profileImage)
         nameTxt.text = feed.userName
         contentTxt.text = feed.text
@@ -47,10 +48,14 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         if (feed.videoURL != null) {
             classtingVideoView.setData(feed.videoURL)
             videoLayout.visibility = View.VISIBLE
+            classtingVideoView.visibility = View.VISIBLE
         } else {
+
             videoLayout.visibility = View.GONE
+            classtingVideoView.visibility = View.GONE
         }
     }
+
 
     override fun setPercent(percent: Int) {
         percentTxt.text = String.format("%d", percent)
@@ -79,25 +84,25 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
 
 
     override fun playVideo(positionMs: Long) {
-        if (feed.videoURL != null && !classtingVideoView.isPlaying()) {
+        if (feed.videoURL != null && !(classtingVideoView.isPlaying())) {
             if (positionMs > 0) feed.playingTime = positionMs   // video detail 재생시간 업데이트
             Logger.v("get playing time: " + feed.playingTime)
             setContinuePlay(feed.playingTime)
-            classtingVideoView.playVideo()
+            classtingVideoView?.playVideo()
             subject.onNext(true)
         }
     }
 
     override fun pauseVideo() {
         if (feed.videoURL != null && classtingVideoView.isPlaying()) {
-            feed.playingTime = getVideoCurrentPosition()
+            feed.playingTime = getVideoCurrentTime()
             Logger.v("save playing time: " + feed.playingTime + 1)
             classtingVideoView.pauseVideo()
             subject.onNext(false)
         }
     }
 
-    fun getVideoCurrentPosition(): Long {
+    fun getVideoCurrentTime(): Long {
         return classtingVideoView.getCurrentPosition()
     }
 

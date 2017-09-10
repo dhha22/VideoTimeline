@@ -38,9 +38,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         presenter.addDummyData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        //presenter.resumeVideo()
+    }
+
     override fun onPause() {
         super.onPause()
-        presenter.pauseVideo(recyclerView)
+        presenter.pauseVideo()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {

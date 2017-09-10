@@ -16,12 +16,14 @@ import kotlin.properties.Delegates
  */
 class VideoDetailFragment : Fragment() {
     private lateinit var videoURL: String
+    var position : Int by Delegates.notNull<Int>()
     private var positionMs: Long by Delegates.notNull()
 
     companion object {
-        fun getInstance(videoURL: String, positionMs: Long): VideoDetailFragment {
+        fun getInstance(position: Int, videoURL: String, positionMs: Long): VideoDetailFragment {
             val fragment = VideoDetailFragment()
             val bundle = Bundle()
+            bundle.putInt("position", position)
             bundle.putString("videoURL", videoURL)
             bundle.putLong("positionMs", positionMs)
             fragment.arguments = bundle
@@ -33,6 +35,7 @@ class VideoDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
         Logger.v("fragment on create")
         if (savedInstanceState == null) {
+            position = arguments.getInt("position")
             videoURL = arguments.getString("videoURL")
             positionMs = arguments.getLong("positionMs")
         }

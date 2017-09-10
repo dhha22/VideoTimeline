@@ -12,7 +12,8 @@ interface MainContract {
     }
 
     interface Presenter {
-        fun pauseVideo(recyclerView: RecyclerView)
+        fun resumeVideo()
+        fun pauseVideo()
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent)
     }
 }

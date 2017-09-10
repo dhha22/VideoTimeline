@@ -12,9 +12,9 @@ class Navigator {
     companion object {
         val VIDEO_DETAIL = 100
 
-        fun goVideoDetail(context: Context, videoURL: String, positionMs: Long = 0) {
+        fun goVideoDetail(context: Context, position: Int,videoURL: String, positionMs: Long = 0) {
             val intent = Intent(context, NavigationActivity::class.java)
-            NavigationActivity.fragment = VideoDetailFragment.getInstance(videoURL, positionMs)
+            NavigationActivity.fragment = VideoDetailFragment.getInstance(position, videoURL, positionMs)
             (context as Activity).startActivityForResult(intent, VIDEO_DETAIL)
         }
     }

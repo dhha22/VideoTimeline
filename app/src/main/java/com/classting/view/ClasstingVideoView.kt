@@ -25,21 +25,21 @@ import kotlinx.android.synthetic.main.classting_vidieo.view.*
 class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
 
     lateinit var player: SimpleExoPlayer
-    private var window: Timeline.Window
     private var mediaDataSourceFactory: DataSource.Factory
     private lateinit var trackSelector: DefaultTrackSelector
     private var bandwidthMeter: BandwidthMeter
+    private var videoURL : String? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.classting_vidieo, this, true)
         bandwidthMeter = DefaultBandwidthMeter()
         mediaDataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "mediaPlayerSample"), bandwidthMeter as TransferListener<in DataSource>)
-        window = Timeline.Window()
         initializePlayer()
     }
 
 
     private fun initializePlayer() {
+        Logger.v("initialize player")
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
         player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
@@ -49,10 +49,13 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun setData(videoURL: String) {
-        val extractorsFactory = DefaultExtractorsFactory()
-        val mediaSource = ExtractorMediaSource(Uri.parse(videoURL),
-                mediaDataSourceFactory, extractorsFactory, null, null)
-        player.prepare(mediaSource)
+        if (this.videoURL == null) {
+            val extractorsFactory = DefaultExtractorsFactory()
+            val mediaSource = ExtractorMediaSource(Uri.parse(videoURL),
+                    mediaDataSourceFactory, extractorsFactory, null, null)
+            player.prepare(mediaSource)
+            this.videoURL = videoURL
+        }
     }
 
     fun showController(){
@@ -65,7 +68,6 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
             Logger.v("play video")
             player.playWhenReady = true
         }
-
     }
 
     fun pauseVideo() {

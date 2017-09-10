@@ -15,14 +15,13 @@ import rx.subjects.PublishSubject
 /**
  * Created by DavidHa on 2017. 9. 6..
  */
-class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedHolder>(), FeedAdapterContract.Model, FeedAdapterContract.View{
+class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedHolder>(), FeedAdapterContract.Model, FeedAdapterContract.View {
     private val feeds: ArrayList<Feed> = ArrayList()
     private lateinit var itemClickListener: OnItemClickListener
     private val videoPositionSubject = PublishSubject.create<Long>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FeedHolder {
         return FeedHolder(ListItemView(context))
-
     }
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
