@@ -67,7 +67,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
             Logger.v("on activity result")
             val time: Long = data.getLongExtra("positionMs", 0) // video 상세페이지 재생 time
             val position: Int = data.getIntExtra("position", 0) // 해당 리스트 position
-            val isRecorded : Boolean = data.getBooleanExtra("isRecorded", false)
+            val isRecorded: Boolean = data.getBooleanExtra("isRecorded", false)
             adapterModel?.getItem(position)?.view?.setRecorded(isRecorded)
             adapterModel?.getItem(position)?.view?.playVideo(time)
             calculateVideoVisibility.curPlayingVideoPos = position
@@ -114,15 +114,15 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         adapterModel?.addItem(Feed(1, "이름1", "text, image 있음", R.drawable.sample1))
         adapterModel?.addItem(Feed(2, "이름2", "big buck bunny\n스트리밍 비디오", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
         adapterModel?.addItem(Feed(3, "이름3", "text, image 있음", R.drawable.sample2))
-        adapterModel?.addItem(Feed(4, "이름4", "이시하라 사토미\n가루보 광고", null, "asset:///sample_video1.mp4"))
-        adapterModel?.addItem(Feed(5, "이름5", "이시하라 사토미\n도쿄미트로 광고 ", null, "asset:///sample_video2.mp4"))
+        adapterModel?.addItem(Feed(4, "이름4", "이시하라 사토미\n가루보 광고\nasset 비디오", null, "asset:///sample_video1.mp4"))
+        adapterModel?.addItem(Feed(5, "이름5", "이시하라 사토미\n도쿄메트로 광고\nasset 비디오 ", null, "asset:///sample_video2.mp4"))
         adapterModel?.addItem(Feed(6, "이름6", "text, image 있음", R.drawable.sample1))
         adapterModel?.addItem(Feed(7, "이름7", "text 만 있음"))
-        adapterModel?.addItem(Feed(8, "이름8", "이시하라 사토미\n술 광고", null, "asset:///sample_video3.mp4"))
+        adapterModel?.addItem(Feed(8, "이름8", "이시하라 사토미\n술 광고\nasset 비디오", null, "asset:///sample_video3.mp4"))
         adapterModel?.addItem(Feed(9, "이름9", "text 만 있음"))
-        adapterModel?.addItem(Feed(10, "이름10", "이시하라 사토미\n가루보 메이킹영상", null, "asset:///sample_video4.mp4"))
-        adapterModel?.addItem(Feed(11, "이름11", "이시하라 사토미\n도자이선 도쿄메트로 광고", null, "asset:///sample_video5.mp4"))
-        adapterModel?.addItem(Feed(12, "이름12", "이시하라 사토미\n과주구미 광고", null, "asset:///sample_video6.mp4"))
+        adapterModel?.addItem(Feed(10, "이름10", "이시하라 사토미\n가루보 메이킹영상\nasset 비디오", null, "asset:///sample_video4.mp4"))
+        adapterModel?.addItem(Feed(11, "이름11", "이시하라 사토미\n도자이선 도쿄메트로 광고\nasset 비디오", null, "asset:///sample_video5.mp4"))
+        adapterModel?.addItem(Feed(12, "이름12", "이시하라 사토미\n과주구미 광고\nasset 비디오", null, "asset:///sample_video6.mp4"))
         adapterModel?.addItem(Feed(13, "이름13", "big buck bunny\n스트리밍 비디오", null, "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
         adapterModel?.addItem(Feed(14, "이름14", "text, image 있음", R.drawable.sample2))
     }
