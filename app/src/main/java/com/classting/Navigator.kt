@@ -12,6 +12,7 @@ class Navigator {
     companion object {
         val VIDEO_DETAIL = 100
 
+        // 비디오 상세화면으로 이동
         fun goVideoDetail(context: Context, feedId: Long, position: Int, videoURL: String, positionMs: Long = 0, isRecorded:Boolean) {
             val intent = Intent(context, NavigationActivity::class.java)
             NavigationActivity.fragment = VideoDetailFragment.getInstance(feedId, position, videoURL, positionMs, isRecorded)

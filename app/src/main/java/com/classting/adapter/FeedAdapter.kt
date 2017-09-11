@@ -15,10 +15,11 @@ import rx.subjects.PublishSubject
 /**
  * Created by DavidHa on 2017. 9. 6..
  */
-class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedHolder>(), FeedAdapterContract.Model, FeedAdapterContract.View {
+class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedHolder>(),
+        FeedAdapterContract.Model, FeedAdapterContract.View {
+
     private val feeds: ArrayList<Feed> = ArrayList()
     private lateinit var itemClickListener: OnItemClickListener
-    private val videoPositionSubject = PublishSubject.create<Long>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FeedHolder {
         return FeedHolder(ListItemView(context))
@@ -36,10 +37,6 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
         this.itemClickListener = onItemClickListener
     }
 
-    override fun setContinuePlay(positionMs: Long) {
-        videoPositionSubject.onNext(positionMs)
-    }
-
     override fun getItem(position: Int): Feed {
         return feeds[position]
     }
@@ -49,17 +46,11 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
         notifyDataSetChanged()
     }
 
-    override fun clearItem() {
-        feeds.clear()
-        notifyDataSetChanged()
-    }
-
 
     inner class FeedHolder(view: View) : Holder(view) {
         override var v: VideoPlayState = view as ListItemView
 
         init {
-            videoPositionSubject.subscribe { v.playVideo(it) }
             (v as ListItemView).setOnClickListener { itemClickListener.onItemClick(it, adapterPosition) }
         }
     }

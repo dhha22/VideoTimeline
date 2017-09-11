@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun onDestroy() {
+        presenter.destroyVideo()
         super.onDestroy()
     }
 

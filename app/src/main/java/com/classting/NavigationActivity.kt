@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_video_detail.*
 class NavigationActivity : AppCompatActivity() {
 
     companion object {
-        lateinit var fragment: Fragment
+        var fragment: Fragment? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +34,7 @@ class NavigationActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_navigation)
         supportFragmentManager.beginTransaction().replace(R.id.frame, fragment).commit()
+        fragment = null
     }
 
 

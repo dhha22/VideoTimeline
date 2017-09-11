@@ -21,7 +21,7 @@ import com.classting.view.contract.MainContract
  */
 
 class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.OnScrollListener() {
-    lateinit var context: Context
+    var context: Context? = null
     lateinit var presenter: MainPresenter
     private lateinit var calculateVideoVisibility: CalculateVideoVisibility
     var adapterModel: FeedAdapterContract.Model? = null
@@ -33,7 +33,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
     var adapterView: FeedAdapterContract.View? = null
         set(value) {
             field = value
-            value?.setOnItemClickListener(this)
+            value?.setOnItemClickListener(this) // binding 할 때 이벤트 리스너 등록
         }
 
 
@@ -86,6 +86,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
 
     // onDestroy 일 경우 모든 작업 중단
     override fun destroyVideo() {
+        context = null
         calculateVideoVisibility.destroyVideo()
     }
 
@@ -100,7 +101,7 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
                 calculateVideoVisibility.curPlayingVideoPos = position
             } else {   // video item 클릭했을 경우 상세페이지로 이동
                 view.pauseVideo()
-                Navigator.goVideoDetail(context, feedId ?: -1, position, videoURL, view.getVideoCurrentTime(), view.isRecorded())
+                Navigator.goVideoDetail(context as Context, feedId ?: -1, position, videoURL, view.getVideoCurrentTime(), view.isRecorded())
             }
         }
     }
