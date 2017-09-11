@@ -16,9 +16,9 @@ import kotlin.properties.Delegates
 class VideoDetailFragment : Fragment() {
     private var feedId by Delegates.notNull<Long>()
     private lateinit var videoURL: String
-    var position  by Delegates.notNull<Int>()
+    var position by Delegates.notNull<Int>()
     private var positionMs: Long by Delegates.notNull()
-    private var isRecorded : Boolean by Delegates.notNull()
+    private var isRecorded: Boolean by Delegates.notNull()
 
     companion object {
         fun getInstance(feedId: Long, position: Int, videoURL: String, positionMs: Long, isRecorded: Boolean): VideoDetailFragment {

@@ -136,4 +136,8 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         return classtingVideoView.isRecorded
     }
 
+    override fun setRecorded(isRecorded : Boolean) {
+        classtingVideoView.isRecorded = isRecorded
+    }
+
 }

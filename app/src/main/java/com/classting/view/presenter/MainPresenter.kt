@@ -67,6 +67,8 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
             Logger.v("on activity result")
             val time: Long = data.getLongExtra("positionMs", 0) // video 상세페이지 재생 time
             val position: Int = data.getIntExtra("position", 0) // 해당 리스트 position
+            val isRecorded : Boolean = data.getBooleanExtra("isRecorded", false)
+            adapterModel?.getItem(position)?.view?.setRecorded(isRecorded)
             adapterModel?.getItem(position)?.view?.playVideo(time)
             calculateVideoVisibility.curPlayingVideoPos = position
         }
