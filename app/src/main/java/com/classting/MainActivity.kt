@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun onResume() {
         super.onResume()
-        //presenter.resumeVideo()
+        presenter.resumeVideo()
     }
 
     override fun onPause() {
@@ -50,6 +50,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         presenter.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 }

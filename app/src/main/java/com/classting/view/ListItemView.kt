@@ -12,7 +12,6 @@ import com.classting.log.Logger
 import com.classting.model.Feed
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
-import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.subjects.PublishSubject
 
@@ -54,20 +53,25 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
             videoLayout.visibility = View.VISIBLE
             classtingVideoView.visibility = View.VISIBLE
         } else {
-
             videoLayout.visibility = View.GONE
             classtingVideoView.visibility = View.GONE
         }
     }
 
 
+    // 테스트 뷰 (view visibility percent)
     override fun setPercent(percent: Int) {
         percentTxt.text = String.format("%d", percent)
     }
 
+    /**
+     * 현재 보이는 video view 위치를 계산하여 videoRect 에 저장함
+     * videoRect.bottom 과 video view 의 height 과 같으면 리스트 화면에 보이는 가장 상단 view
+     * videoRect.top 이 0일 경우 리스트 화면에 보이는 가장 하단 view
+     */
     override fun getVisibilityPercent(): Int {
         var percent: Int = 0
-        classtingVideoView.getLocalVisibleRect(videoRect)   // 현재 Video View의 위치를 가져옴
+        classtingVideoView.getLocalVisibleRect(videoRect)
         //Logger.v("rect top: " + videoRect.top + ", rect bottom: " + videoRect.bottom + ", view height: " + classtingVideoView.height)
         if (videoRect.bottom == classtingVideoView.height) {
             percent = (videoRect.bottom - videoRect.top) * 100 / videoRect.bottom   // first item
@@ -77,6 +81,7 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         return percent
     }
 
+    // video play 상태에 따라 video cover 의 상태가 변함
     private fun videoCoverState(isPlaying: Boolean) {
         Logger.v("playWhenReady: $isPlaying")
         if (isPlaying) {
@@ -86,9 +91,12 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
-
+    /**
+     * video 를 재생 시킨다.
+     * 재생시간이 있을 경우 이어서 video 재생
+     */
     override fun playVideo(positionMs: Long) {
-        if (feed.videoURL != null && !(classtingVideoView.isPlaying())) {
+        if (feed.videoURL != null && !classtingVideoView.isPlaying()) {
             if (positionMs > 0) feed.playingTime = positionMs   // video detail 재생시간 업데이트
             Logger.v("get playing time: " + feed.playingTime)
             setContinuePlay(feed.playingTime)
@@ -96,19 +104,27 @@ class ListItemView(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
+    /**
+     * video 를 일시정지 시킨다.
+     * 해당 video 가 플레이되고 있는 재생시간을 저장한뒤 일시 정지
+     */
     override fun pauseVideo() {
         if (feed.videoURL != null && classtingVideoView.isPlaying()) {
             feed.playingTime = getVideoCurrentTime()
-            Logger.v("save playing time: " + feed.playingTime + 1)
+            Logger.v("save playing time: " + feed.playingTime)
             classtingVideoView.pauseVideo()
         }
+    }
+
+    fun restartVideo() {
+        classtingVideoView.restartVideo()
     }
 
     fun getVideoCurrentTime(): Long {
         return classtingVideoView.getCurrentTime()
     }
 
-    fun setContinuePlay(positionMs: Long) {
+    private fun setContinuePlay(positionMs: Long) {
         classtingVideoView.continuePlay(positionMs)
     }
 

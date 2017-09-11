@@ -90,10 +90,19 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    fun restartVideo() {
+        if(isEnd){
+            player.seekTo(0)
+            player.playWhenReady = true
+            isEnd = false
+        }
+    }
+
     fun release() {
         player.release()
     }
 
+    // 현재 비디오 플레이 시간 구하기
     fun getCurrentTime(): Long {
         return player.currentPosition
     }
@@ -114,31 +123,37 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         this.playStateSubject = playStateSubject
     }
 
+    /**
+     * Video Player State 가 변할때마다 호출되는 함수
+     * @param playWhenReady : true 일 경우 재생, false 일 경우 일시정지
+     * @param playbackState : STATE_READY 재생 준비된 상태, STATE_ENDED 재생이 끝난 상태
+     */
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         Logger.v("feed id: $feedId, playWhenReady: $playWhenReady, playbackState: $playbackState")
-        player.playWhenReady = playWhenReady
         when (playbackState) {
             Player.STATE_READY -> {
                 if (player.playWhenReady && !isRecorded) {   // playing  앱 시작하고나서 최초로 한번만 기록
-                    timerSubscription = Observable.timer(3, TimeUnit.SECONDS)
+                    timerSubscription = Observable.timer(3, TimeUnit.SECONDS)   // 3초뒤에 기록
                             .observeOn(Schedulers.io())
                             .subscribe({ FileUtil.recordVideoInfo(context.filesDir, feedId) }, { Logger.e(it) }, {
                                 isRecorded = true
                                 timerSubscription = null
                             })
                 } else {  // pause
-                    timerSubscription?.unsubscribe()
+                    timerSubscription?.unsubscribe()    // pause 일 경우 해제
                 }
                 isEnd = false
+                playStateSubject?.onNext(player.playWhenReady)
             }
 
-            Player.STATE_ENDED -> { // video is end
+            Player.STATE_ENDED -> {
                 Logger.v("video is end")
-                playStateSubject?.onNext(false)
+                player.playWhenReady = true    // 비디오가 끝나면 playWhenReady 값이 true 변함 (restart 준비)
                 isEnd = true
+                playStateSubject?.onNext(false)
             }
         }
-        playStateSubject?.onNext(player.playWhenReady)
+
     }
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {

@@ -23,7 +23,7 @@ class FileUtil {
                 val timeStamp = getTimeStamp().toString()
                 stringBuilder.append("Feed id: ").append(feedId).append(", ")
                 val copyStr = searchFeedId(stringBuilder, timeStamp, file)
-                Logger.v("copy str: $copyStr")
+                Logger.v("copy str\n: $copyStr")
 
                 val writer = BufferedWriter(FileWriter(file))
                 writer.write(copyStr)
@@ -39,7 +39,7 @@ class FileUtil {
             var isFind : Boolean = false
             do {
                 line = reader.readLine()
-                Logger.v("line: " + line)
+                //Logger.v("line: " + line)
                 if (line == null) {
                     if(!isFind) {
                         stringBuilder.append(timeStamp)
@@ -51,12 +51,12 @@ class FileUtil {
 
                 if (line.contains(stringBuilder)) {
                     isFind = true
-                    Logger.v("find contains")
+                    //Logger.v("find contains")
                     val replaceLine = line.replaceRange(0, line.length, stringBuilder.append(timeStamp).toString())
-                    Logger.v("replace line: $replaceLine")
+                    //Logger.v("replace line: $replaceLine")
                     copyStr.append(replaceLine + "\r\n")
                 } else {
-                    Logger.v("write line: $line")
+                    //Logger.v("write line: $line")
                     copyStr.append(line + "\r\n")
                 }
             } while (true)

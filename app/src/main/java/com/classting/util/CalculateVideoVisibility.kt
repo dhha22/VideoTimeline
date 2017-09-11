@@ -12,7 +12,7 @@ import rx.schedulers.Schedulers
  */
 class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
 
-    private var curPlayingVideoPos: Int = -1
+    var curPlayingVideoPos: Int = -1
     private var topPosition: Int = 0
     private var bottomPosition: Int = 0
     private lateinit var subscription: Subscription
@@ -24,10 +24,14 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
      * @param bottomPosition : recyclerView 화면에 보이는 하단 position
      */
     fun onScrollStateChanged(topPosition: Int, bottomPosition: Int) {
-        this.bottomPosition = bottomPosition
         Logger.v("top position: $topPosition , bottom position: $bottomPosition")
+
+        if (curPlayingVideoPos !in topPosition..bottomPosition) {
+            pauseVideo()
+        }
+
         subscription = Observable
-                .range(topPosition, this.bottomPosition - topPosition + 1)   // range (n,m) = n ~ n+m-1
+                .range(topPosition, bottomPosition - topPosition + 1)   // range (n,m) = n ~ n+m-1
                 .filter { adapterModel.getItem(it).videoURL != null && adapterModel.getItem(it).view != null }   // 비디오 동영상일 경우만 확인
                 .subscribeOn(Schedulers.computation())
                 .subscribe({ setVideoPlayState(adapterModel.getItem(it).view!!, it) }, { Logger.e(it) })
@@ -39,8 +43,10 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
      * @param bottomPosition : recyclerView 화면에 보이는 하단 position
      */
     fun onScrolled(topPosition: Int, bottomPosition: Int) {
+        this.topPosition = topPosition
+        this.bottomPosition = bottomPosition
         if (curPlayingVideoPos !in topPosition..bottomPosition) {
-            pauseVideo()
+            Logger.e("pause video: $curPlayingVideoPos")
         }
     }
 
@@ -56,15 +62,18 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
         // 화면에 비디오가 50% 이상 보일 경우 && 화면에 두개이상 동영상이 있을경우 상위 위치한 동영상만 play
         if (percent >= 50 && (curPlayingVideoPos == -1 || position <= curPlayingVideoPos)) {
             curPlayingVideoPos = position
+            Logger.v("curPlayVideoPos: $curPlayingVideoPos")
             view.playVideo()
         } else {
             if (position == curPlayingVideoPos) curPlayingVideoPos = -1
+            Logger.v("curPlayVideoPos: $curPlayingVideoPos")
             view.pauseVideo()
         }
     }
 
     fun pauseVideo() {
         if (curPlayingVideoPos != -1) {
+            Logger.v("pause pos: $curPlayingVideoPos" )
             adapterModel.getItem(curPlayingVideoPos).view!!.pauseVideo()
             curPlayingVideoPos = -1
         }
@@ -72,8 +81,13 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
 
     fun playVideo() {
         if (curPlayingVideoPos != -1) {
+            Logger.v("play video: $curPlayingVideoPos")
             adapterModel.getItem(curPlayingVideoPos).view!!.playVideo()
         }
+    }
+
+    fun destroyVideo() {
+        subscription.unsubscribe()
     }
 
 }

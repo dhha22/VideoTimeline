@@ -57,6 +57,21 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         }
     }
 
+
+    /**
+     * 비디오 상세화면(VideoDetailFragment)에서 재생 정보를 받아와서 videoView update
+     * onResume() 보다 먼저 실행
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (requestCode == Navigator.VIDEO_DETAIL && resultCode == Activity.RESULT_OK) {
+            Logger.v("on activity result")
+            val time: Long = data.getLongExtra("positionMs", 0) // video 상세페이지 재생 time
+            val position: Int = data.getIntExtra("position", 0) // 해당 리스트 position
+            adapterModel?.getItem(position)?.view?.playVideo(time)
+            calculateVideoVisibility.curPlayingVideoPos = position
+        }
+    }
+
     // onResume 일 경우 Video Play 재생
     override fun resumeVideo() {
         calculateVideoVisibility.playVideo()
@@ -67,6 +82,11 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         calculateVideoVisibility.pauseVideo()
     }
 
+    // onDestroy 일 경우 모든 작업 중단
+    override fun destroyVideo() {
+        calculateVideoVisibility.destroyVideo()
+    }
+
 
     // feed list item 클릭했을 경우
     override fun onItemClick(view: View, position: Int) {
@@ -74,8 +94,8 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         val feedId = adapterModel?.getItem(position)?.id
         if (videoURL != null) {
             if ((view as ListItemView).isVideoEnded()) {  // 완료된 비디오를 누를경우 처음부터 재생
-                view.setContinuePlay(0)
-                view.playVideo()
+                view.restartVideo()
+                calculateVideoVisibility.curPlayingVideoPos = position
             } else {   // video item 클릭했을 경우 상세페이지로 이동
                 view.pauseVideo()
                 Navigator.goVideoDetail(context, feedId ?: -1, position, videoURL, view.getVideoCurrentTime(), view.isRecorded())
@@ -83,17 +103,6 @@ class MainPresenter : MainContract.Presenter, OnItemClickListener, RecyclerView.
         }
     }
 
-    /**
-     * 비디오 상세화면(VideoDetailFragment)에서 재생 정보를 받아와서 videoView update
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == Navigator.VIDEO_DETAIL && resultCode == Activity.RESULT_OK) {
-            Logger.v("on activity result")
-            val time: Long = data.getLongExtra("positionMs", 0) // video 상세페이지 재생 time
-            val position: Int = data.getIntExtra("position", 0) // 해당 리스트 position
-            adapterModel?.getItem(position)?.view?.playVideo(time)
-        }
-    }
 
     /**
      * Dummy Data Feed(id, userName, text, photoURL, videoURL)

@@ -59,9 +59,7 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.FeedH
         override var v: VideoPlayState = view as ListItemView
 
         init {
-            videoPositionSubject.subscribe {
-                v.playVideo(it)
-            }
+            videoPositionSubject.subscribe { v.playVideo(it) }
             (v as ListItemView).setOnClickListener { itemClickListener.onItemClick(it, adapterPosition) }
         }
     }
