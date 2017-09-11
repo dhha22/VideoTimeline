@@ -61,10 +61,4 @@ class VideoDetailFragment : Fragment() {
         classtingVideoView.playVideo()
         classtingVideoView.isRecorded = isRecorded
     }
-
-    override fun onPause() {
-        super.onPause()
-        classtingVideoView.pauseVideo()
-    }
-
 }

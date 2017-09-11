@@ -43,11 +43,13 @@ class NavigationActivity : AppCompatActivity() {
 
         // 비디오 상세화면에서 back 키 눌렀을 경우 비디오 정보 리스트로 전달
         if (fragment is VideoDetailFragment) {
+            fragment.classtingVideoView.stop()
             val intent = Intent()
             intent.putExtra("position", fragment.position)  // 리스트 position
             intent.putExtra("positionMs", fragment.classtingVideoView.getCurrentTime()) // 비디오 재생시간
             intent.putExtra("isRecorded", fragment.classtingVideoView.isRecorded)  // 비디오 기록 여부
             setResult(Activity.RESULT_OK, intent)
+            fragment.classtingVideoView.release()
         }
         super.onBackPressed()
     }

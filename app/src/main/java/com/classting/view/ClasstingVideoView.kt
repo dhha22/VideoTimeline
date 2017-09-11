@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.classting.R
 import com.classting.log.Logger
-import com.classting.model.Feed
 import com.classting.util.FileUtil
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -32,16 +31,17 @@ import kotlin.properties.Delegates
  */
 class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet), Player.EventListener {
 
-    lateinit var player: SimpleExoPlayer
+    private lateinit var player: SimpleExoPlayer
     private var mediaDataSourceFactory: DataSource.Factory
     private lateinit var trackSelector: DefaultTrackSelector
     private var bandwidthMeter: BandwidthMeter
     private var feedId by Delegates.notNull<Long>()
     private lateinit var videoURL: String
-    private var isEnd: Boolean = false
     private var playStateSubject: PublishSubject<Boolean>? = null
     private var timerSubscription: Subscription? = null
-    var isRecorded : Boolean = false
+    private var isEnd: Boolean = false  // 비디오 완료 여부
+    var isRecorded: Boolean = false     // 비디오 기록 여부
+    private val fileUtil = FileUtil()
 
     init {
         LayoutInflater.from(context).inflate(R.layout.classting_vidieo, this, true)
@@ -91,7 +91,7 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun restartVideo() {
-        if(isEnd){
+        if (isEnd) {
             player.seekTo(0)
             player.playWhenReady = true
             isEnd = false
@@ -99,7 +99,13 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     fun release() {
+        videoView.overlayFrameLayout.removeAllViews()
         player.release()
+    }
+
+    fun stop() {
+        player.playWhenReady = false
+        player.stop()
     }
 
     // 현재 비디오 플레이 시간 구하기
@@ -132,15 +138,21 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
         Logger.v("feed id: $feedId, playWhenReady: $playWhenReady, playbackState: $playbackState")
         when (playbackState) {
             Player.STATE_READY -> {
-                if (player.playWhenReady && !isRecorded) {   // playing  앱 시작하고나서 최초로 한번만 기록
-                    timerSubscription = Observable.timer(3, TimeUnit.SECONDS)   // 3초뒤에 기록
-                            .observeOn(Schedulers.io())
-                            .subscribe({ FileUtil.recordVideoInfo(context.filesDir, feedId) }, { Logger.e(it) }, {
-                                isRecorded = true
-                                timerSubscription = null
-                            })
+                if (player.playWhenReady) {   // playing  앱 시작하고나서 최초로 한번만 기록
+                    if (!isRecorded && timerSubscription == null) {
+                        Logger.v("set timer")
+                        timerSubscription = Observable.timer(3, TimeUnit.SECONDS)   // 3초뒤에 기록
+                                .subscribeOn(Schedulers.immediate())
+                                .observeOn(Schedulers.io())
+                                .subscribe({ fileUtil.recordVideoInfo(context.filesDir, feedId) }, { Logger.e(it) }, {
+                                    isRecorded = true
+                                    timerSubscription = null
+                                })
+                    }
                 } else {  // pause
+                    Logger.v("unsubscribe")
                     timerSubscription?.unsubscribe()    // pause 일 경우 해제
+                    timerSubscription = null
                 }
                 isEnd = false
                 playStateSubject?.onNext(player.playWhenReady)
@@ -156,13 +168,15 @@ class ClasstingVideoView(context: Context, attributeSet: AttributeSet? = null) :
 
     }
 
+    override fun onPlayerError(error: ExoPlaybackException?) {
+        Logger.e(error.toString())
+        initializePlayer()
+    }
+
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
     }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-    }
-
-    override fun onPlayerError(error: ExoPlaybackException?) {
     }
 
     override fun onLoadingChanged(isLoading: Boolean) {

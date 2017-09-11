@@ -46,7 +46,7 @@ class CalculateVideoVisibility(val adapterModel: FeedAdapterContract.Model) {
         this.topPosition = topPosition
         this.bottomPosition = bottomPosition
         if (curPlayingVideoPos !in topPosition..bottomPosition) {
-            Logger.e("pause video: $curPlayingVideoPos")
+            pauseVideo()
         }
     }
 
