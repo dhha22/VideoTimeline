@@ -55,7 +55,7 @@
         android:layout_below="@id/contentTxt">
 
 
-        <com.classting.view.ClasstingVideoView
+        <com.dhha22.videotimeline.view.CustomVideoView
             android:id="@+id/classtingVideoView"
             android:layout_width="match_parent"
             android:layout_height="240dp"

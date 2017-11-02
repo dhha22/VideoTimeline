@@ -5,7 +5,7 @@
     android:background="@color/black"
     android:orientation="vertical">
 
-    <com.classting.view.ClasstingVideoView
+    <com.dhha22.videotimeline.view.CustomVideoView
         android:id="@+id/classtingVideoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
